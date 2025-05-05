@@ -69,7 +69,7 @@ class CandidateRepository:
         # Construct the hybrid search query
         query = f"""
         -- Set vector search parameters
-        SET LOCAL ivfflat.probes = {settings.VECTOR_PROBES};
+        SET LOCAL ivfflat.probes = 100;
         
         WITH candidate_scores AS (
             SELECT
@@ -141,15 +141,20 @@ class CandidateRepository:
         LIMIT %s
         """
         
-        params = (
-            mn_patterns,      # position_title ILIKE ANY
-            mn_patterns,      # work_description ILIKE ANY
+        # Debug the query and parameters
+        logger.debug(f"Query parameters count: {query.count('%s')}")
+        
+        # PostgreSQL needs arrays in a specific format for ANY operator
+        # The reason for the error is that we need to pass an actual array, not a tuple of strings
+        params = [
+            mn_patterns,      # position_title ILIKE ANY - must be a list, not a tuple
+            mn_patterns,      # work_description ILIKE ANY - must be a list, not a tuple
             en_tsquery,       # ts_rank_cd condition
             en_tsquery,       # to_tsquery parameter
             vector_str,       # embedding <-> parameter
-            mn_patterns,      # For position titles ordering
+            mn_patterns,      # For position titles ordering - must be a list, not a tuple
             limit             # LIMIT parameter
-        )
+        ]
         
         results = []
         with get_db_connection() as conn:

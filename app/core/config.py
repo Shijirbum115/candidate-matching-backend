@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # OpenAI configuration
     OPENAI_API_KEY: str
     EMBEDDING_MODEL: str = "text-embedding-3-large"
-    TRANSLATION_MODEL: str = "gpt-3.5-turbo"
+    TRANSLATION_MODEL: str = "gpt-4o-mini"
     
     # Search configuration
     DEFAULT_SEARCH_LIMIT: int = 20
@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     
     # Vector search configuration
     VECTOR_PROBES: int = 100
+    HNSW_EF_SEARCH: int = 100
     
     # Logging configuration
     LOG_LEVEL: str = "INFO"
